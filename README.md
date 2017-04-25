@@ -34,6 +34,11 @@ graph-based static-dynamic hybrid DEX code analysis tool.
 
     This will print the decoded XML file to the stdout.
 
+    `axmldec` removes unnecessary whitespaces. Use another tool to make the
+    output pretty if necessary:
+
+        axmldec AndroidManifest.xml | xmllint --format - > pretty.xml
+
 ## 3 Building
 
 Install Boost and CMake. Then compile:
