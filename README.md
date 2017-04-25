@@ -24,9 +24,9 @@ graph-based static-dynamic hybrid DEX code analysis tool.
 
 ## 2 Usage
 
-1. Use `unzip` to extract the files from a APK file:
+1. Use `unzip` to extract the manifest file from a APK file:
 
-        unzip AndroidApp.apk
+        unzip -j com.example.app.apk AndroidManifest.xml
 
 2. Pass the manifest file (either binary or text) the tool to decode:
 
