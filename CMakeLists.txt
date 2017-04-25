@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(ManifestXML C CXX)
+project(axmldec C CXX)
 
 include(CheckCXXCompilerFlag)
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
@@ -40,12 +40,3 @@ add_executable(axmldec
     lib/jitana/util/axml_parser.cpp
 )
 target_link_libraries(axmldec ${Boost_LIBRARIES})
-
-add_custom_target(axmldec-copy-files
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/scripts
-        ${CMAKE_CURRENT_BINARY_DIR}
-)
-add_dependencies(axmldec axmldec-copy-files)
-
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output)
