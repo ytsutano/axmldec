@@ -1,5 +1,5 @@
-`axmldec`: Android Binary Binary XML Decoder
-============================================
+`axmldec`: Android Binary XML Decoder
+=====================================
 
 ## 1 Overview
 
