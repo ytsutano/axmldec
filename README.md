@@ -34,10 +34,16 @@ graph-based static-dynamic hybrid DEX code analysis tool.
 
     This will print the decoded XML file to the stdout.
 
-## 3 Developer
+## 3 Building
+
+Install Boost and CMake. Then compile:
+
+    cmake -DCMAKE_BUILD_TYPE=Release . && make
+
+## 4 Developer
 
 - Yutaka Tsutano at University of Nebraska-Lincoln.
 
-## 4 License
+## 5 License
 
 - See [LICENSE.md](LICENSE.md) for license rights and limitations (ISC).
