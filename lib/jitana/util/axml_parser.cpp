@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/locale.hpp>
 
 #include "jitana/util/axml_parser.hpp"
 #include "jitana/util/stream_reader.hpp"
@@ -312,7 +313,7 @@ namespace jitana {
                 off = reader_.get<uint32_t>();
             }
 
-            // Fill the string table. TODO: support unicode.
+            // Fill the string table.
             strings_.clear();
             strings_.reserve(string_count);
             for (auto off : string_offsets) {
@@ -342,15 +343,9 @@ namespace jitana {
                         len |= ((len & 0x7fff) << 16) | reader_.get<uint16_t>();
                     }
 
-                    // Fill characters.
-                    str.resize(len);
-                    for (auto& c : str) {
-                        c = reader_.get<uint16_t>();
-                    }
-
-                    if (reader_.get<uint16_t>() != 0) {
-                        throw axml_parser_error("invalid UTF-16 string");
-                    }
+                    // Convert to UTF-8.
+                    auto* ptr = &reader_.peek<uint16_t>();
+                    str = boost::locale::conv::utf_to_utf<char>(ptr, ptr + len);
                 }
             }
         }

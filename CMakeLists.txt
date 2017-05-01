@@ -30,7 +30,7 @@ include_directories("include")
 
 set(BOOST_MIN_VERSION "1.54.0")
 find_package(Boost ${BOOST_MIN_VERSION}
-    COMPONENTS system iostreams program_options REQUIRED)
+    COMPONENTS system iostreams program_options locale REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 add_executable(axmldec
