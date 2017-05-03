@@ -15,6 +15,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 
@@ -22,12 +23,11 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/program_options/options_description.hpp>
-#include <boost/program_options/parsers.hpp>
-#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options.hpp>
 
 void process_xml(std::ostream& os, const std::string& filename)
 {
+    // Construct a property tree from the input XML file.
     boost::property_tree::ptree pt;
     try {
         // First, try to read as a binary XML file.
@@ -38,8 +38,9 @@ void process_xml(std::ostream& os, const std::string& filename)
         boost::property_tree::read_xml(filename, pt);
     }
 
+    // Write the ptree to the output.
     boost::property_tree::xml_writer_settings<std::string> settings(' ', 2);
-    write_xml(os, pt, settings);
+    boost::property_tree::write_xml(os, pt, settings);
 }
 
 int main(int argc, char** argv)
