@@ -13,14 +13,19 @@ standard output.
                            |
               Text XML ----+
 
-Tools such as Apktool are designed to process the whole APK file including the
-resource files for reverse engineering purpose. They may also need a Java
-virtual machine to run. As a result, it is too slow for batch processing many
-APK files just get the XML information. This tool ignores the resource files
-and written in simple modern C++ that runs nicely within a shell script.
+Tools such as [Apktool](https://ibotpeaches.github.io/Apktool/) are designed to
+process the whole APK file including the resource files for reverse engineering
+purpose. They may also need a Java virtual machine to run. As a result, it is
+too slow for batch processing many APK files just get the XML information. This
+tool ignores the resource files and written in simple modern C++ that runs
+nicely within a shell script.
 
-The parser is taken from [Jitana](https://github.com/ytsutano/jitana), a
-graph-based static-dynamic hybrid DEX code analysis tool.
+The [parser](include/jitana/util/axml_parser.hpp) is taken from
+[Jitana](https://github.com/ytsutano/jitana), a graph-based static-dynamic
+hybrid DEX code analysis tool. You can use `read_axml()` to read a binary XML
+file into `boost::property_tree::ptree` ([Boost Property
+Tree](http://www.boost.org/doc/libs/1_64_0/doc/html/property_tree.html)) in
+your C++ program just like a normal XML file.
 
 ## 2 Usage
 
@@ -28,26 +33,27 @@ graph-based static-dynamic hybrid DEX code analysis tool.
 
         unzip -j com.example.app.apk AndroidManifest.xml
 
-2. Pass the manifest file (either binary or text) the tool to decode:
+2. Pass the manifest file (either binary or text) to decode:
 
-        axmldec AndroidManifest.xml
+        axmldec -o output.xml AndroidManifest.xml
 
-    This will print the decoded XML file to the stdout.
+    This will write the decoded XML to `output.xml`.
 
-    `axmldec` removes unnecessary whitespaces. Use another tool to make the
-    output pretty if necessary:
+    `axmldec` writes to the standard output if the `-o` option is not
+    specified. This is useful when additional processing is required. For
+    example, you can extract the package name using `xmllint`:
 
-        axmldec AndroidManifest.xml | xmllint --format - > pretty.xml
+        axmldec AndroidManifest.xml | xmllint --xpath 'string(/manifest/@package)' -
 
 ## 3 Building
 
-Install Boost and CMake. Then compile:
+Install Boost and CMake. Make sure you have a latest C++ compiler. Then compile:
 
     cmake -DCMAKE_BUILD_TYPE=Release . && make
 
 ## 4 Developer
 
-- Yutaka Tsutano at University of Nebraska-Lincoln.
+- [Yutaka Tsutano](http://yutaka.tsutano.com) at University of Nebraska-Lincoln.
 
 ## 5 License
 
