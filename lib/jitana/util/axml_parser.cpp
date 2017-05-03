@@ -1829,7 +1829,7 @@ namespace jitana {
 
             // For now, we only care about the attribute names.
             id -= 0x1010000;
-            if (id < 0 || id >= sizeof(attr_names) / sizeof(attr_names[0])) {
+            if (id >= sizeof(attr_names) / sizeof(attr_names[0])) {
                 throw axml_parser_error("invalid resource id");
             }
             return attr_names[id];
