@@ -29,12 +29,24 @@ your C++ program just like a normal XML file.
 
 ## 2 Installation
 
-On macOS, you can install `axmldec` using [Homebrew](https://brew.sh):
+### 2.1 macOS
+
+You can install `axmldec` using [Homebrew](https://brew.sh) (recommended):
 
     brew tap ytsutano/toolbox
     brew install axmldec
 
-Otherwise, please build the tool from the source code.
+Or, download the binary from
+[Releases](https://github.com/ytsutano/axmldec/releases).
+
+### 2.2 Windows
+
+Download the .exe file from
+[Releases](https://github.com/ytsutano/axmldec/releases).
+
+### 2.3 Linux
+
+Build the tool from the source code (see below).
 
 ## 3 Usage
 
