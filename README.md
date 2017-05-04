@@ -27,7 +27,16 @@ file into `boost::property_tree::ptree` ([Boost Property
 Tree](http://www.boost.org/doc/libs/1_64_0/doc/html/property_tree.html)) in
 your C++ program just like a normal XML file.
 
-## 2 Usage
+## 2 Installation
+
+On macOS, you can install `axmldec` using [Homebrew](https://brew.sh):
+
+    brew tap ytsutano/toolbox
+    brew install axmldec
+
+Otherwise, please build the tool from the source code.
+
+## 3 Usage
 
 1. Use `unzip` to extract the manifest file from a APK file:
 
@@ -45,16 +54,16 @@ your C++ program just like a normal XML file.
 
         axmldec AndroidManifest.xml | xmllint --xpath 'string(/manifest/@package)' -
 
-## 3 Building
+## 4 Building
 
 Install Boost and CMake. Make sure you have a latest C++ compiler. Then compile:
 
     cmake -DCMAKE_BUILD_TYPE=Release . && make
 
-## 4 Developer
+## 5 Developer
 
 - [Yutaka Tsutano](http://yutaka.tsutano.com) at University of Nebraska-Lincoln.
 
-## 5 License
+## 6 License
 
 - See [LICENSE.md](LICENSE.md) for license rights and limitations (ISC).
