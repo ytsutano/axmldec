@@ -74,12 +74,13 @@ int main(int argc, char** argv)
             std::cout << "." << AXMLDEC_VERSION_MINOR;
             std::cout << "." << AXMLDEC_VERSION_PATCH;
             std::cout << " (" << AXMLDEC_BUILD_TIMESTAMP << ")\n";
+            std::cout << "Copyright (C) 2017 Yutaka Tsutano.\n";
             return 0;
         }
 
         if (vmap.count("help") || !vmap.count("input-file")) {
             // Print help and quit.
-            std::cout << "Usage: axmldec [options] <input_file>\n";
+            std::cout << "Usage: axmldec [options] <input_file>\n\n";
             std::cout << desc << "\n";
             return 0;
         }
