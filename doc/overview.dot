@@ -1,0 +1,36 @@
+digraph {
+    rankdir=LR;
+    ranksep=0.6;
+
+    subgraph cluster_axmldec {
+        {
+
+            node [style=filled, color=gray87, shape=none, fontname=Courier, fontsize=12, fontcolor=midnightblue];
+            {
+                read_xml [label="boost_pt::read_xml()", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/boost/property_tree/xml_parser/read_xml_idp683796192.html"];
+                read_axml [label="jitana::read_axml()", URL="https://github.com/ytsutano/axmldec/blob/master/include/jitana/util/axml_parser.hpp"];
+                rank=same;
+            }
+            write_xml [label="boost_pt::write_xml()", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/boost/property_tree/xml_parser/write_xml_idp683815200.html"];
+        }
+        ptree [label="Boost\nProperty Tree", shape="none", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/property_tree.html"];
+
+        read_axml -> ptree;
+        read_xml -> ptree;
+        ptree -> write_xml;
+
+        style=filled;
+        color=gray95;
+        label="axmldec -o output.xml AndroidManifest.xml";
+        fontname=Courier;
+        fontcolor=midnightblue
+    }
+
+    axml [label="Android\nBinary XML", shape="none"];
+    txml [label="Standard\nText XML", shape="none"];
+    decoded_xml [label="Decoded\nStandard\nText XML", shape="none"];
+
+    axml -> read_axml;
+    txml -> read_xml;
+    write_xml -> decoded_xml;
+}

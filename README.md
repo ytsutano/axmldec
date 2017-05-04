@@ -3,15 +3,11 @@
 
 ## 1 Overview
 
-`AndroidManifest.xml` in an APK file can be binary encoded. This tool simply
-accepts either a binary or text XML file and prints the decoded XML to the
-standard output.
+`AndroidManifest.xml` in an APK file can be binary encoded. This tool accepts
+either a binary or a text XML file and prints the decoded XML to the standard
+output or a file.
 
-    Android Binary XML ----+
-                           |
-                           +--->[axmldec]----> Decoded Text XML
-                           |
-              Text XML ----+
+![](doc/overview.svg)
 
 Tools such as [Apktool](https://ibotpeaches.github.io/Apktool/) are designed to
 process the whole APK file including the resource files for reverse engineering
