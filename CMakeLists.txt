@@ -40,3 +40,5 @@ add_executable(axmldec
     lib/jitana/util/axml_parser.cpp
 )
 target_link_libraries(axmldec ${Boost_LIBRARIES})
+
+install(TARGETS axmldec DESTINATION bin)
