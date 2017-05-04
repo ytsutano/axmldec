@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
 
 project(axmldec C CXX)
+set(AXMLDEC_VERSION_MAJOR 1)
+set(AXMLDEC_VERSION_MINOR 0)
+set(AXMLDEC_VERSION_PATCH 1)
+string(TIMESTAMP AXMLDEC_BUILD_TIMESTAMP)
 
 include(CheckCXXCompilerFlag)
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
@@ -32,6 +36,12 @@ set(BOOST_MIN_VERSION "1.54.0")
 find_package(Boost ${BOOST_MIN_VERSION}
     COMPONENTS system iostreams program_options locale REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
+configure_file (
+    "${PROJECT_SOURCE_DIR}/axmldec_config.hpp.in"
+    "${PROJECT_BINARY_DIR}/axmldec_config.hpp"
+)
+include_directories("${PROJECT_BINARY_DIR}")
 
 add_executable(axmldec
     main.cpp

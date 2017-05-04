@@ -14,12 +14,13 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "axmldec_config.hpp"
+#include "jitana/util/axml_parser.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
-
-#include "jitana/util/axml_parser.hpp"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -50,6 +51,7 @@ int main(int argc, char** argv)
     // Declare command line argument options.
     po::options_description desc("Allowed options");
     desc.add_options()("help", "Display available options")(
+            "version", "Display version number")(
             "input-file,i", po::value<std::string>(), "Input file")(
             "output-file,o", po::value<std::string>(), "Output file");
     po::positional_options_description p;
@@ -64,6 +66,16 @@ int main(int argc, char** argv)
                           .run(),
                   vmap);
         po::notify(vmap);
+
+        if (vmap.count("version")) {
+            // Print version and quit.
+            std::cout << "axmldec ";
+            std::cout << AXMLDEC_VERSION_MAJOR;
+            std::cout << "." << AXMLDEC_VERSION_MINOR;
+            std::cout << "." << AXMLDEC_VERSION_PATCH;
+            std::cout << " (" << AXMLDEC_BUILD_TIMESTAMP << ")\n";
+            return 0;
+        }
 
         if (vmap.count("help") || !vmap.count("input-file")) {
             // Print help and quit.
