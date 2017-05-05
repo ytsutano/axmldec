@@ -28,7 +28,7 @@ namespace jitana {
         using runtime_error::runtime_error;
     };
 
-    struct axml_parser_magic_mismatched : axml_parser_error {
+    struct axml_parser_not_an_axml_file : axml_parser_error {
         using axml_parser_error::axml_parser_error;
     };
 

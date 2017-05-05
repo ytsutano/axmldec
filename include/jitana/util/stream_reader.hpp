@@ -56,6 +56,12 @@ namespace jitana {
             return end_ptr_;
         }
 
+        /// Returns the buffer size.
+        size_t size() const
+        {
+            return end_ptr_ - begin_ptr_;
+        }
+
         /// Moves the head.
         void move_head(size_t pos = 0) const
         {

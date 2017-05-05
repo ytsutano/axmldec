@@ -247,11 +247,16 @@ namespace jitana {
             xml_stack_.clear();
             xml_stack_.emplace_back(&pt_);
 
+            // Make sure that the file is large enough.
+            if (reader_.size() < sizeof(res_chunk_header)) {
+                throw axml_parser_not_an_axml_file("not a binary XML file");
+            }
+
             const auto& header = reader_.get<res_chunk_header>();
 
             // Make sure it's the right file type.
             if (header.type != res_xml_type) {
-                throw axml_parser_magic_mismatched("not a binary XML file");
+                throw axml_parser_not_an_axml_file("not a binary XML file");
             }
 
             // Apply pull parsing.

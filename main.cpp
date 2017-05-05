@@ -38,7 +38,7 @@ void process_xml(const std::string& input_filename,
             // First, try to read as a binary XML file.
             jitana::read_axml(input_filename, pt);
         }
-        catch (const jitana::axml_parser_magic_mismatched& e) {
+        catch (const jitana::axml_parser_not_an_axml_file& e) {
             // Binary parser has faied: try to read it as a normal XML file.
             boost::property_tree::read_xml(input_filename, pt);
         }
@@ -110,6 +110,10 @@ int main(int argc, char** argv)
             // Process the file.
             process_xml(input_filename, output_filename);
         }
+    }
+    catch (std::ios::failure& e) {
+        std::cerr << "error: failed to open the input file\n";
+        return 1;
     }
     catch (std::exception& e) {
         std::cerr << "error: " << e.what() << "\n";
