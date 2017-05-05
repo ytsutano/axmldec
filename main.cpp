@@ -26,22 +26,38 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/program_options.hpp>
 
-void process_xml(std::ostream& os, const std::string& filename)
+void process_xml(const std::string& input_filename,
+                 const std::string& output_filename)
 {
-    // Construct a property tree from the input XML file.
+    // Property tree for storing the XML content.
     boost::property_tree::ptree pt;
-    try {
-        // First, try to read as a binary XML file.
-        jitana::read_axml(filename, pt);
-    }
-    catch (const jitana::axml_parser_magic_mismatched& e) {
-        // Binary parser has faied: try to read it as a normal XML file.
-        boost::property_tree::read_xml(filename, pt);
+
+    // Load from the input file.
+    {
+        try {
+            // First, try to read as a binary XML file.
+            jitana::read_axml(input_filename, pt);
+        }
+        catch (const jitana::axml_parser_magic_mismatched& e) {
+            // Binary parser has faied: try to read it as a normal XML file.
+            boost::property_tree::read_xml(input_filename, pt);
+        }
     }
 
-    // Write the ptree to the output.
-    boost::property_tree::xml_writer_settings<std::string> settings(' ', 2);
-    boost::property_tree::write_xml(os, pt, settings);
+    // Write decoded XML to the output.
+    {
+        // Construct the output stream.
+        std::ostream* os = &std::cout;
+        std::ofstream ofs;
+        if (!output_filename.empty()) {
+            ofs.open(output_filename);
+            os = &ofs;
+        }
+
+        // Write the ptree to the output.
+        boost::property_tree::xml_writer_settings<std::string> settings(' ', 2);
+        boost::property_tree::write_xml(*os, pt, settings);
+    }
 }
 
 int main(int argc, char** argv)
@@ -86,16 +102,13 @@ int main(int argc, char** argv)
         }
 
         if (vmap.count("input-file")) {
-            // Construct the output stream.
-            std::ostream* os = &std::cout;
-            std::ofstream ofs;
-            if (vmap.count("output-file")) {
-                ofs.open(vmap["output-file"].as<std::string>());
-                os = &ofs;
-            }
+            auto input_filename = vmap["input-file"].as<std::string>();
+            auto output_filename = vmap.count("output-file")
+                    ? vmap["output-file"].as<std::string>()
+                    : "";
 
             // Process the file.
-            process_xml(*os, vmap["input-file"].as<std::string>());
+            process_xml(input_filename, output_filename);
         }
     }
     catch (std::exception& e) {

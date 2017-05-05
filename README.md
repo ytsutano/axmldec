@@ -54,7 +54,8 @@ Build the tool from the source code (see below).
 
         axmldec -o output.xml AndroidManifest.xml
 
-    This will write the decoded XML to `output.xml`.
+    This will write the decoded XML to `output.xml`. You can specify the same
+    filename for input and output to decode the file in-place.
 
 ### 3.2 Using the Standard Output
 
