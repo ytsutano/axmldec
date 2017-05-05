@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2016, Yutaka Tsutano
+ * Copyright (c) 2015, 2016, 2017, Yutaka Tsutano
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -25,40 +25,55 @@ namespace jitana {
     class stream_reader {
     public:
         /// Creates a stream_reader instance.
-        explicit stream_reader(const void* base_ptr = nullptr)
+        stream_reader()
         {
-            set_base(base_ptr);
+            set_memory_range(nullptr, nullptr);
         }
 
-        /// Sets the base pointer.
-        void set_base(const void* base_ptr)
+        /// Creates a stream_reader instance.
+        explicit stream_reader(const void* first, const void* last)
         {
-            base_ptr_ = reinterpret_cast<const uint8_t*>(base_ptr);
+            set_memory_range(first, last);
+        }
+
+        /// Sets the begin and end pointers.
+        void set_memory_range(const void* first, const void* last)
+        {
+            begin_ptr_ = reinterpret_cast<const uint8_t*>(first);
+            end_ptr_ = reinterpret_cast<const uint8_t*>(last);
             move_head(0);
         }
 
-        /// Returns the base pointer.
-        const void* base() const
+        /// Returns the begin pointer.
+        const void* begin() const
         {
-            return base_ptr_;
+            return begin_ptr_;
+        }
+
+        /// Returns the end pointer.
+        const void* end() const
+        {
+            return end_ptr_;
         }
 
         /// Moves the head.
         void move_head(size_t pos = 0) const
         {
-            head_ptr_ = base_ptr_ + pos;
+            head_ptr_ = begin_ptr_ + pos;
+            validate_head();
         }
 
         /// Moves the head forward.
         void move_head_forward(int off = 0) const
         {
             head_ptr_ += off;
+            validate_head();
         }
 
         /// Returns the head index.
         size_t head() const
         {
-            return head_ptr_ - base_ptr_;
+            return head_ptr_ - begin_ptr_;
         }
 
         /// Returns the reference to the value of specified type from the head
@@ -66,15 +81,8 @@ namespace jitana {
         template <typename T>
         const T& peek() const
         {
+            validate_head(sizeof(T));
             return *reinterpret_cast<const T*>(head_ptr_);
-        }
-
-        /// Returns the reference to the value of specified type from pos
-        /// without moving the head.
-        template <typename T>
-        const T& peek_at(size_t pos) const
-        {
-            return *reinterpret_cast<const T*>(base_ptr_ + pos);
         }
 
         /// Returns the reference to the value of specified type from the head.
@@ -168,15 +176,29 @@ namespace jitana {
             const char* str = reinterpret_cast<const char*>(head_ptr_);
 
             // Move the head pointer forward to the next value.
-            while (*head_ptr_++ != '\0')
-                ;
+            while (*head_ptr_++ != '\0') {
+                if (head_ptr_ >= end_ptr_) {
+                    throw std::runtime_error("invalid string");
+                }
+            }
 
             return str;
         }
 
     private:
-        /// The base pointer.
-        const uint8_t* base_ptr_;
+        /// Validates the head pointer against the begin/end pointers.
+        void validate_head(size_t type_size = 0) const
+        {
+            if (head_ptr_ < begin_ptr_ || head_ptr_ + type_size > end_ptr_) {
+                throw std::runtime_error("invalid offset");
+            }
+        }
+
+        /// The begin pointer.
+        const uint8_t* begin_ptr_;
+
+        /// The end pointer.
+        const uint8_t* end_ptr_;
 
         /// The head pointer.
         mutable const uint8_t* head_ptr_;

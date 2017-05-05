@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Yutaka Tsutano
+ * Copyright (c) 2016, 2017, Yutaka Tsutano
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1857,7 +1857,7 @@ void jitana::read_axml(const std::string& filename,
 {
     boost::iostreams::mapped_file file(filename);
 
-    stream_reader reader(file.data());
+    stream_reader reader(file.begin(), file.end());
     axml_parser p(reader, pt);
     p.parse();
 }
