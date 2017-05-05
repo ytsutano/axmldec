@@ -7,7 +7,7 @@
 either a binary or a text XML file and prints the decoded XML to the standard
 output or a file.
 
-![](doc/overview.svg)
+![](doc/overview.png)
 
 Tools such as [Apktool](https://ibotpeaches.github.io/Apktool/) are designed to
 process the whole APK file including the resource files for reverse engineering
