@@ -3,9 +3,9 @@ axmldec: Android Binary XML Decoder
 
 ## 1 Overview
 
-`AndroidManifest.xml` in an APK file can be binary encoded. This tool accepts
-either a binary or a text XML file and prints the decoded XML to the standard
-output or a file.
+[`AndroidManifest.xml`][Android App Manifest] in an [APK file][APK] can be
+binary encoded. This tool accepts either a binary or a text XML file and prints
+the decoded XML to the standard output or a file.
 
 ![](doc/overview.png)
 
@@ -28,9 +28,10 @@ program.
 ### 2.1 macOS
 
 You can install axmldec using [Homebrew]:
-
-    brew tap ytsutano/toolbox
-    brew install axmldec
+```sh
+brew tap ytsutano/toolbox
+brew install axmldec
+```
 
 Or, download the binary from [Releases].
 
@@ -47,12 +48,14 @@ Build the tool from the source code (see below).
 ### 3.1 Retrieving `AndroidManifest.xml` from an APK File
 
 1. Use `unzip` to extract the manifest file from an APK file:
-
-        unzip -j com.example.app.apk AndroidManifest.xml
+    ```sh
+    unzip -j com.example.app.apk AndroidManifest.xml
+    ```
 
 2. Pass the manifest file (either binary or text) to decode:
-
-        axmldec -o output.xml AndroidManifest.xml
+    ```sh
+    axmldec -o output.xml AndroidManifest.xml
+    ```
 
     This will write the decoded XML to `output.xml`. You can specify the same
     filename for input and output to decode the file in-place.
@@ -62,14 +65,16 @@ Build the tool from the source code (see below).
 axmldec writes to the standard output if the `-o` option is not specified. This
 is useful when additional processing is required. For example, you can extract
 the package name using `xmllint`:
-
-    axmldec AndroidManifest.xml | xmllint --xpath 'string(/manifest/@package)' -
+```sh
+axmldec AndroidManifest.xml | xmllint --xpath 'string(/manifest/@package)' -
+```
 
 ## 4 Building
 
 Install Boost and CMake. Make sure you have a latest C++ compiler. Then compile:
-
-    cmake -DCMAKE_BUILD_TYPE=Release . && make
+```sh
+cmake -DCMAKE_BUILD_TYPE=Release . && make
+```
 
 ## 5 Developer
 
@@ -84,4 +89,6 @@ Install Boost and CMake. Make sure you have a latest C++ compiler. Then compile:
 [Jitana]: https://github.com/ytsutano/jitana
 [ptree]: http://www.boost.org/doc/libs/1_64_0/doc/html/property_tree.html
 [Homebrew]: https://brew.sh
+[APK]: https://en.wikipedia.org/wiki/Android_application_package
+[Android App Manifest]: https://developer.android.com/guide/topics/manifest/manifest-intro.html
 [Apktool]: https://ibotpeaches.github.io/Apktool/
