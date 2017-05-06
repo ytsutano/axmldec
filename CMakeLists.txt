@@ -25,11 +25,15 @@ else()
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -pedantic")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 endif()
 
+configure_file(
+    "${PROJECT_SOURCE_DIR}/axmldec_config.hpp.in"
+    "${PROJECT_BINARY_DIR}/axmldec_config.hpp"
+)
+
+include_directories("${PROJECT_BINARY_DIR}")
 include_directories("include")
 
 set(BOOST_MIN_VERSION "1.53.0")
@@ -41,11 +45,9 @@ add_definitions(
     -DBOOST_MINOR_VERSION=${Boost_MINOR_VERSION}
 )
 
-configure_file (
-    "${PROJECT_SOURCE_DIR}/axmldec_config.hpp.in"
-    "${PROJECT_BINARY_DIR}/axmldec_config.hpp"
-)
-include_directories("${PROJECT_BINARY_DIR}")
+#-------------------------------------------------------------------------------
+# axmldec
+#-------------------------------------------------------------------------------
 
 add_executable(axmldec
     main.cpp
@@ -88,12 +90,16 @@ add_custom_target(count
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
     if(COMPILER_SUPPORTS_CXX14)
-        set(CMAKE_DOXYGEN_CLANG_OPTIONS "${CMAKE_DOXYGEN_CLANG_OPTIONS} -std=c++14")
+        set(CMAKE_DOXYGEN_CLANG_OPTIONS
+            "${CMAKE_DOXYGEN_CLANG_OPTIONS} -std=c++14")
     else()
-        set(CMAKE_DOXYGEN_CLANG_OPTIONS "${CMAKE_DOXYGEN_CLANG_OPTIONS} -std=c++1y")
+        set(CMAKE_DOXYGEN_CLANG_OPTIONS
+            "${CMAKE_DOXYGEN_CLANG_OPTIONS} -std=c++1y")
     endif()
-    set(CMAKE_DOXYGEN_CLANG_OPTIONS "${CMAKE_DOXYGEN_CLANG_OPTIONS} -stdlib=libc++")
-    set(CMAKE_DOXYGEN_CLANG_OPTIONS "${CMAKE_DOXYGEN_CLANG_OPTIONS} --verbose")
+    set(CMAKE_DOXYGEN_CLANG_OPTIONS
+        "${CMAKE_DOXYGEN_CLANG_OPTIONS} -stdlib=libc++")
+    set(CMAKE_DOXYGEN_CLANG_OPTIONS
+        "${CMAKE_DOXYGEN_CLANG_OPTIONS} --verbose")
 
     configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/Doxyfile.in

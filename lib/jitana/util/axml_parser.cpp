@@ -1851,7 +1851,7 @@ namespace jitana {
             boost::property_tree::ptree* pt;
             std::vector<std::pair<uint32_t, uint32_t>> namespaces;
 
-            xml_stack_item(boost::property_tree::ptree* pt) : pt(pt)
+            explicit xml_stack_item(boost::property_tree::ptree* pt) : pt(pt)
             {
             }
         };

@@ -1,5 +1,5 @@
-`axmldec`: Android Binary XML Decoder
-=====================================
+axmldec: Android Binary XML Decoder
+===================================
 
 ## 1 Overview
 
@@ -12,7 +12,7 @@ output or a file.
 Tools such as [Apktool] are designed to process the whole APK file including
 the resource files for reverse engineering purpose. They may also need a Java
 virtual machine to run. As a result, they are too slow for batch processing
-many APK files just to get the XML information. In contrast, `axmldec` is
+many APK files just to get the XML information. In contrast, axmldec is
 specialized for binary XML decoding and written in simple modern C++, so it
 runs nicely within a shell script.
 
@@ -27,7 +27,7 @@ program.
 
 ### 2.1 macOS
 
-You can install `axmldec` using [Homebrew]:
+You can install axmldec using [Homebrew]:
 
     brew tap ytsutano/toolbox
     brew install axmldec
@@ -59,9 +59,9 @@ Build the tool from the source code (see below).
 
 ### 3.2 Using the Standard Output
 
-`axmldec` writes to the standard output if the `-o` option is not
-specified. This is useful when additional processing is required. For
-example, you can extract the package name using `xmllint`:
+axmldec writes to the standard output if the `-o` option is not specified. This
+is useful when additional processing is required. For example, you can extract
+the package name using `xmllint`:
 
     axmldec AndroidManifest.xml | xmllint --xpath 'string(/manifest/@package)' -
 

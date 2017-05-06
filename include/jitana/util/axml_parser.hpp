@@ -17,11 +17,12 @@
 #ifndef JITANA_AXML_PARSER_HPP
 #define JITANA_AXML_PARSER_HPP
 
-#include <type_traits>
+#include "jitana/util/stream_reader.hpp"
+
+#include <cstdint>
+#include <stdexcept>
 
 #include <boost/property_tree/ptree.hpp>
-
-#include "jitana/util/stream_reader.hpp"
 
 namespace jitana {
     struct axml_parser_error : std::runtime_error {
