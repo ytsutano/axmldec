@@ -51,4 +51,18 @@ add_executable(axmldec
 )
 target_link_libraries(axmldec ${Boost_LIBRARIES})
 
+#-------------------------------------------------------------------------------
+# Install
+#-------------------------------------------------------------------------------
+
 install(TARGETS axmldec DESTINATION bin)
+
+#-------------------------------------------------------------------------------
+# clang-format
+#-------------------------------------------------------------------------------
+
+add_custom_target(format
+    find . \\\( -name "*.hpp" -or -name "*.cpp" \\\)
+            -type f -exec clang-format -i {} \\+
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
