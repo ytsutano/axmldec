@@ -32,10 +32,14 @@ endif()
 
 include_directories("include")
 
-set(BOOST_MIN_VERSION "1.54.0")
+set(BOOST_MIN_VERSION "1.53.0")
 find_package(Boost ${BOOST_MIN_VERSION}
     COMPONENTS system iostreams program_options locale REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+add_definitions(
+    -DBOOST_MAJOR_VERSION=${Boost_MAJOR_VERSION}
+    -DBOOST_MINOR_VERSION=${Boost_MINOR_VERSION}
+)
 
 configure_file (
     "${PROJECT_SOURCE_DIR}/axmldec_config.hpp.in"

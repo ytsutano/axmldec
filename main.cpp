@@ -29,8 +29,10 @@
 void process_xml(const std::string& input_filename,
                  const std::string& output_filename)
 {
+    namespace boost_pt = boost::property_tree;
+
     // Property tree for storing the XML content.
-    boost::property_tree::ptree pt;
+    boost_pt::ptree pt;
 
     // Load from the input file.
     {
@@ -40,7 +42,7 @@ void process_xml(const std::string& input_filename,
         }
         catch (const jitana::axml_parser_not_an_axml_file& e) {
             // Binary parser has faied: try to read it as a normal XML file.
-            boost::property_tree::read_xml(input_filename, pt);
+            boost_pt::read_xml(input_filename, pt);
         }
     }
 
@@ -55,8 +57,14 @@ void process_xml(const std::string& input_filename,
         }
 
         // Write the ptree to the output.
-        boost::property_tree::xml_writer_settings<std::string> settings(' ', 2);
-        boost::property_tree::write_xml(*os, pt, settings);
+        {
+#if BOOST_MAJOR_VERSION == 1 && BOOST_MINOR_VERSION < 56
+            boost_pt::xml_writer_settings<char> settings(' ', 2);
+#else
+            boost_pt::xml_writer_settings<std::string> settings(' ', 2);
+#endif
+            boost_pt::write_xml(*os, pt, settings);
+        }
     }
 }
 

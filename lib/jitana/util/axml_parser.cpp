@@ -484,14 +484,16 @@ namespace jitana {
 
         uint32_t lookup_prefix(uint32_t uri)
         {
-            auto stack_it = rbegin(xml_stack_);
+            auto stack_it = xml_stack_.rbegin();
             ++stack_it;
-            for (; stack_it != rend(xml_stack_); ++stack_it) {
+            for (; stack_it != xml_stack_.rend(); ++stack_it) {
                 const auto& v = stack_it->namespaces;
-                auto it = std::find_if(rbegin(v), rend(v), [&](const auto& x) {
-                    return x.first == uri;
-                });
-                if (it != rend(v)) {
+                auto it = std::find_if(
+                        v.rbegin(), v.rend(),
+                        [&](const std::pair<uint32_t, uint32_t>& x) {
+                            return x.first == uri;
+                        });
+                if (it != v.rend()) {
                     return it->second;
                 }
             }

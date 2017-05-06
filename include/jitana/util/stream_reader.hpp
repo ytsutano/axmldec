@@ -17,7 +17,8 @@
 #ifndef JITANA_STREAM_READER_HPP
 #define JITANA_STREAM_READER_HPP
 
-#include <type_traits>
+#include <cstdint>
+#include <stdexcept>
 
 namespace jitana {
     /// An utility class for extracting values with variable length types from a
