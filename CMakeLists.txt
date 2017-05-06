@@ -66,3 +66,13 @@ add_custom_target(format
             -type f -exec clang-format -i {} \\+
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+#-------------------------------------------------------------------------------
+# Line Count
+#-------------------------------------------------------------------------------
+
+add_custom_target(count
+    find . \\\( -name "*.hpp" -or -name "*.hpp.in" -or -name "*.cpp" \\\)
+            -print0 | xargs -0 wc -l
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
