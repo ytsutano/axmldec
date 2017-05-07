@@ -28,9 +28,11 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 endif()
 
-configure_file(
-    "${PROJECT_SOURCE_DIR}/axmldec_config.hpp.in"
-    "${PROJECT_BINARY_DIR}/axmldec_config.hpp"
+add_definitions(
+    -DAXMLDEC_VERSION_MAJOR="${AXMLDEC_VERSION_MAJOR}"
+    -DAXMLDEC_VERSION_MINOR="${AXMLDEC_VERSION_MINOR}"
+    -DAXMLDEC_VERSION_PATCH="${AXMLDEC_VERSION_PATCH}"
+    -DAXMLDEC_BUILD_TIMESTAMP="${AXMLDEC_BUILD_TIMESTAMP}"
 )
 
 include_directories("${PROJECT_BINARY_DIR}")
@@ -78,7 +80,7 @@ add_custom_target(format
 #-------------------------------------------------------------------------------
 
 add_custom_target(count
-    find . \\\( -name "*.hpp" -or -name "*.hpp.in" -or -name "*.cpp" \\\)
+    find . \\\( -name "*.hpp" -or -name -name "*.cpp" \\\)
             -print0 | xargs -0 wc -l
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
