@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.11)
 project(axmldec C CXX)
 option(ENABLE_APK_LOADING "enable loading from an APK file" ON)
 set(AXMLDEC_VERSION_MAJOR 1)
-set(AXMLDEC_VERSION_MINOR 1)
+set(AXMLDEC_VERSION_MINOR 2)
 set(AXMLDEC_VERSION_PATCH 0)
 string(TIMESTAMP AXMLDEC_BUILD_TIMESTAMP)
 
