@@ -1,36 +1,46 @@
 digraph {
     rankdir=LR;
-    ranksep=0.6;
+    ranksep=0.1
+
+    edge [fontsize=10];
+
+    {
+        xml [label="AndroidManifest.xml\n(Binary/Text XML)", shape=none];
+        apk [label="com.example.app.apk", shape=none];
+        rank=same;
+    }
+    decoded_xml [label="output.xml\n(Text XML)", shape=none];
+
+    xml -> apk [style=invis];
 
     subgraph cluster_axmldec {
         {
-
             node [style=filled, color=gray87, shape=none, fontname=Courier, fontsize=12, fontcolor=midnightblue];
+            extract_manifest [label="extract_manifest()", URL="https://github.com/ytsutano/axmldec/blob/master/main.cpp"];
             {
-                read_xml [label="boost_pt::read_xml()", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/boost/property_tree/xml_parser/read_xml_idp683796192.html"];
-                read_axml [label="jitana::read_axml()", URL="https://github.com/ytsutano/axmldec/blob/master/include/jitana/util/axml_parser.hpp"];
+                read_xml [label="boost_pt::\nread_xml()", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/boost/property_tree/xml_parser/read_xml_idp683796192.html"];
+                read_axml [label="jitana::\nread_axml()", URL="https://github.com/ytsutano/axmldec/blob/master/include/jitana/util/axml_parser.hpp"];
                 rank=same;
             }
-            write_xml [label="boost_pt::write_xml()", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/boost/property_tree/xml_parser/write_xml_idp683815200.html"];
+            write_xml [label="boost_pt::\nwrite_xml()", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/boost/property_tree/xml_parser/write_xml_idp683815200.html"];
+            read_axml_xml [shape=point];
         }
-        ptree [label="Boost\nProperty Tree", shape="none", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/property_tree.html"];
+        ptree [label="Boost\nProperty Tree", shape=none, URL="http://www.boost.org/doc/libs/1_64_0/doc/html/property_tree.html"];
 
         read_axml -> ptree;
         read_xml -> ptree;
+        extract_manifest -> read_axml [label="Binary", weight=1000];
         ptree -> write_xml;
 
         style=filled;
         color=gray95;
-        label="axmldec -o output.xml AndroidManifest.xml";
+        label="axmldec -o output.xml AndroidManifest.xml\naxmldec -o output.xml com.example.app.apk\n ";
         fontname=Courier;
         fontcolor=midnightblue
     }
 
-    axml [label="Android\nBinary XML", shape="none"];
-    txml [label="Standard\nText XML", shape="none"];
-    decoded_xml [label="Decoded\nStandard\nText XML", shape="none"];
-
-    axml -> read_axml;
-    txml -> read_xml;
+    xml -> read_axml [xlabel="Binary"];
+    xml -> read_xml [xlabel="Text"];
+    apk -> extract_manifest;
     write_xml -> decoded_xml;
 }

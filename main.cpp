@@ -25,46 +25,122 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/program_options.hpp>
 
-void process_xml(const std::string& input_filename,
-                 const std::string& output_filename)
-{
-    namespace boost_pt = boost::property_tree;
+#ifdef ENABLE_APK_LOADING
+#include <unzip.h>
+#endif
 
+namespace boost_pt = boost::property_tree;
+
+struct membuf : std::streambuf {
+    membuf(const char* base, size_t size)
+    {
+        char* p(const_cast<char*>(base));
+        this->setg(p, p, p + size);
+    }
+};
+
+struct imemstream : virtual membuf, std::istream {
+    imemstream(char const* base, size_t size)
+            : membuf(base, size),
+              std::istream(static_cast<std::streambuf*>(this))
+    {
+    }
+};
+
+std::vector<char> extract_manifest(const std::string input_filename)
+{
+#ifdef ENABLE_APK_LOADING
+    auto* apk = unzOpen(input_filename.c_str());
+    if (apk == nullptr) {
+        throw std::runtime_error("not an APK file");
+    }
+
+    if (unzLocateFile(apk, "AndroidManifest.xml", 0) != UNZ_OK) {
+        unzClose(apk);
+        throw std::runtime_error("AndroidManifest.xml is not found in APK");
+    }
+
+    if (unzOpenCurrentFile(apk) != UNZ_OK) {
+        unzClose(apk);
+        throw std::runtime_error("failed to open AndroidManifest.xml in APK");
+    }
+
+    unz_file_info64 info;
+    if (unzGetCurrentFileInfo64(apk, &info, nullptr, 0, nullptr, 0, nullptr, 0)
+        != UNZ_OK) {
+        unzCloseCurrentFile(apk);
+        unzClose(apk);
+        throw std::runtime_error("failed to open AndroidManifest.xml in APK");
+    }
+
+    std::vector<char> content(info.uncompressed_size);
+    constexpr size_t read_size = 1 << 15;
+    for (size_t offset = 0;; offset += read_size) {
+        int len = unzReadCurrentFile(apk, content.data() + offset, read_size);
+        if (len == 0) {
+            break;
+        }
+        else if (len < 0) {
+            unzCloseCurrentFile(apk);
+            unzClose(apk);
+            throw std::runtime_error(
+                    "failed to read AndroidManifest.xml in APK");
+        }
+    }
+
+    unzCloseCurrentFile(apk);
+    unzClose(apk);
+
+    return content;
+#else
+    (void)input_filename;
+    throw std::runtime_error("axmldec is compiled without APK loading support");
+#endif
+}
+
+void write_xml(const std::string& output_filename, const boost_pt::ptree& pt)
+{
+    // Construct the output stream.
+    std::ostream* os = &std::cout;
+    std::ofstream ofs;
+    if (!output_filename.empty()) {
+        ofs.open(output_filename);
+        os = &ofs;
+    }
+
+    // Write the ptree to the output.
+    {
+#if BOOST_MAJOR_VERSION == 1 && BOOST_MINOR_VERSION < 56
+        boost_pt::xml_writer_settings<char> settings(' ', 2);
+#else
+        boost_pt::xml_writer_settings<std::string> settings(' ', 2);
+#endif
+        boost_pt::write_xml(*os, pt, settings);
+    }
+}
+
+void process_file(const std::string& input_filename,
+                  const std::string& output_filename)
+{
     // Property tree for storing the XML content.
     boost_pt::ptree pt;
 
-    // Load from the input file.
-    {
-        try {
-            // First, try to read as a binary XML file.
-            jitana::read_axml(input_filename, pt);
-        }
-        catch (const jitana::axml_parser_not_an_axml_file& e) {
-            // Binary parser has faied: try to read it as a normal XML file.
-            boost_pt::read_xml(input_filename, pt);
-        }
+    // Load the XML into ptree.
+    std::ifstream ifs(input_filename, std::ios::binary);
+    if (ifs.peek() == 'P') {
+        auto content = extract_manifest(input_filename);
+        imemstream ims(content.data(), content.size());
+        jitana::read_axml(ims, pt);
+    }
+    else if (ifs.peek() == 0x03) {
+        jitana::read_axml(ifs, pt);
+    }
+    else {
+        boost_pt::read_xml(ifs, pt, boost_pt::xml_parser::trim_whitespace);
     }
 
-    // Write decoded XML to the output.
-    {
-        // Construct the output stream.
-        std::ostream* os = &std::cout;
-        std::ofstream ofs;
-        if (!output_filename.empty()) {
-            ofs.open(output_filename);
-            os = &ofs;
-        }
-
-        // Write the ptree to the output.
-        {
-#if BOOST_MAJOR_VERSION == 1 && BOOST_MINOR_VERSION < 56
-            boost_pt::xml_writer_settings<char> settings(' ', 2);
-#else
-            boost_pt::xml_writer_settings<std::string> settings(' ', 2);
-#endif
-            boost_pt::write_xml(*os, pt, settings);
-        }
-    }
+    // Write the tree as an XML file.
+    write_xml(output_filename, pt);
 }
 
 int main(int argc, char** argv)
@@ -97,6 +173,12 @@ int main(int argc, char** argv)
             std::cout << "." << AXMLDEC_VERSION_MINOR;
             std::cout << "." << AXMLDEC_VERSION_PATCH;
             std::cout << " (" << AXMLDEC_BUILD_TIMESTAMP << ")\n";
+            std::cout << "APK loading support: ";
+#ifdef ENABLE_APK_LOADING
+            std::cout << "enabled\n";
+#else
+            std::cout << "disabled\n";
+#endif
             std::cout << "Copyright (C) 2017 Yutaka Tsutano.\n";
             return 0;
         }
@@ -115,7 +197,7 @@ int main(int argc, char** argv)
                     : "";
 
             // Process the file.
-            process_xml(input_filename, output_filename);
+            process_file(input_filename, output_filename);
         }
     }
     catch (std::ios::failure& e) {

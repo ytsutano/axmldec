@@ -35,6 +35,8 @@ namespace jitana {
 
     void read_axml(const std::string& filename,
                    boost::property_tree::ptree& pt);
+
+    void read_axml(std::istream& stream, boost::property_tree::ptree& pt);
 }
 
 #endif

@@ -3,9 +3,10 @@ axmldec: Android Binary XML Decoder
 
 ## 1 Overview
 
-[`AndroidManifest.xml`][Android App Manifest] in an [APK file][APK] can be
-binary encoded. This tool accepts either a binary or a text XML file and prints
-the decoded XML to the standard output or a file.
+[`AndroidManifest.xml`][Android App Manifest] in an [APK file][APK] is binary
+encoded. This tool accepts either a binary or a text XML file and prints the
+decoded XML to the standard output or a file. It also allows you to extract the
+decoded `AndroidManifest.xml` directly from an APK file.
 
 ![](doc/overview.png)
 
@@ -45,36 +46,49 @@ Build the tool from the source code (see below).
 
 ## 3 Usage
 
-### 3.1 Retrieving `AndroidManifest.xml` from an APK File
+### 3.1 Decoding `AndroidManifest.xml`
 
-1. Use `unzip` to extract the manifest file from an APK file:
-    ```sh
-    unzip -j com.example.app.apk AndroidManifest.xml
-    ```
+Pass the manifest file (either binary or text) to decodedecode:
+```sh
+axmldec -o output.xml AndroidManifest.xml
+```
 
-2. Pass the manifest file (either binary or text) to decode:
-    ```sh
-    axmldec -o output.xml AndroidManifest.xml
-    ```
+This will write the decoded XML to `output.xml`. You can specify the same
+filename for input and output to decode the file in-place.
 
-    This will write the decoded XML to `output.xml`. You can specify the same
-    filename for input and output to decode the file in-place.
+### 3.2 Decoding `AndroidManifest.xml` in an APK File
 
-### 3.2 Using the Standard Output
+If an APK file is specified, axmldec automatically extracts and decodes
+`AndroidManifest.xml`:
+```sh
+axmldec -o output.xml com.example.app.apk
+```
+
+### 3.3 Using the Standard Output
 
 axmldec writes to the standard output if the `-o` option is not specified. This
 is useful when additional processing is required. For example, you can extract
-the package name using `xmllint`:
+the package name from an APK file using xmllint:
 ```sh
-axmldec AndroidManifest.xml | xmllint --xpath 'string(/manifest/@package)' -
+axmldec com.example.app.apk | xmllint --xpath 'string(/manifest/@package)' -
 ```
 
 ## 4 Building
 
-Install Boost and CMake. Make sure you have a latest C++ compiler. Then compile:
-```sh
-cmake -DCMAKE_BUILD_TYPE=Release . && make
-```
+1. Install Boost, zlib, and CMake. Make sure you have a latest C++ compiler.
+
+2. Clone axmldec and its submodule from GitHub:
+    ```sh
+    git clone --recursive https://github.com/ytsutano/axmldec.git
+    ```
+
+3. Compile axmldec:
+    ```sh
+    cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_APK_LOADING=YES . && make
+    ```
+
+    You can specify `-DENABLE_APK_LOADING=NO` to disable APK loading. In this
+    case, zlib is not required.
 
 ## 5 Developer
 

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 project(axmldec C CXX)
+option(ENABLE_APK_LOADING "enable loading from an APK file" ON)
 set(AXMLDEC_VERSION_MAJOR 1)
 set(AXMLDEC_VERSION_MINOR 1)
 set(AXMLDEC_VERSION_PATCH 0)
@@ -38,15 +39,6 @@ add_definitions(
 include_directories("${PROJECT_BINARY_DIR}")
 include_directories("include")
 
-set(BOOST_MIN_VERSION "1.53.0")
-find_package(Boost ${BOOST_MIN_VERSION}
-    COMPONENTS system iostreams program_options locale REQUIRED)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-add_definitions(
-    -DBOOST_MAJOR_VERSION=${Boost_MAJOR_VERSION}
-    -DBOOST_MINOR_VERSION=${Boost_MINOR_VERSION}
-)
-
 #-------------------------------------------------------------------------------
 # axmldec
 #-------------------------------------------------------------------------------
@@ -57,7 +49,36 @@ add_executable(axmldec
     include/jitana/util/stream_reader.hpp
     lib/jitana/util/axml_parser.cpp
 )
+
+set(BOOST_MIN_VERSION "1.53.0")
+find_package(Boost ${BOOST_MIN_VERSION}
+    COMPONENTS system iostreams program_options locale REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+add_definitions(
+    -DBOOST_MAJOR_VERSION=${Boost_MAJOR_VERSION}
+    -DBOOST_MINOR_VERSION=${Boost_MINOR_VERSION}
+)
 target_link_libraries(axmldec ${Boost_LIBRARIES})
+
+if(ENABLE_APK_LOADING)
+    find_package(ZLIB REQUIRED)
+    include_directories(${ZLIB_INCLUDE_DIR})
+
+    add_definitions(
+        -DENABLE_APK_LOADING=1
+    )
+    add_library(minizip STATIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/minizip/unzip.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/minizip/ioapi.c
+    )
+    set_target_properties(minizip PROPERTIES
+        COMPILE_DEFINITIONS "NOUNCRYPT;NOCRYPT")
+    target_link_libraries(minizip ${ZLIB_LIBRARIES})
+    set(MINIZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/minizip)
+    set(MINIZIP_LIBRARIES minizip)
+    include_directories(SYSTEM ${MINIZIP_INCLUDE_DIR})
+    target_link_libraries(axmldec ${MINIZIP_LIBRARIES})
+endif()
 
 #-------------------------------------------------------------------------------
 # Install
@@ -70,7 +91,7 @@ install(TARGETS axmldec DESTINATION bin)
 #-------------------------------------------------------------------------------
 
 add_custom_target(format
-    find . \\\( -name "*.hpp" -or -name "*.cpp" \\\)
+    find main.cpp include lib \\\( -name "*.hpp" -or -name "*.cpp" \\\)
             -type f -exec clang-format -i {} \\+
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -80,7 +101,7 @@ add_custom_target(format
 #-------------------------------------------------------------------------------
 
 add_custom_target(count
-    find . \\\( -name "*.hpp" -or -name -name "*.cpp" \\\)
+    find main.cpp include lib \\\( -name "*.hpp" -or -name -name "*.cpp" \\\)
             -print0 | xargs -0 wc -l
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -112,4 +133,4 @@ if(DOXYGEN_FOUND)
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
-endif(DOXYGEN_FOUND)
+endif()

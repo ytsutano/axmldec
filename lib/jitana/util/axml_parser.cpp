@@ -1868,3 +1868,15 @@ void jitana::read_axml(const std::string& filename,
     axml_parser p(reader, pt);
     p.parse();
 }
+
+void jitana::read_axml(std::istream& stream, boost::property_tree::ptree& pt)
+{
+    std::vector<uint8_t> buffer;
+    std::for_each(std::istreambuf_iterator<char>(stream),
+                  std::istreambuf_iterator<char>(),
+                  [&buffer](const char c) { buffer.push_back(c); });
+
+    stream_reader reader(buffer.data(), buffer.data() + buffer.size());
+    axml_parser p(reader, pt);
+    p.parse();
+}
