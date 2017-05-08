@@ -47,7 +47,7 @@ struct imemstream : virtual membuf, std::istream {
     }
 };
 
-std::vector<char> extract_manifest(const std::string input_filename)
+std::vector<char> extract_manifest(const std::string& input_filename)
 {
 #ifdef ENABLE_APK_LOADING
     auto* apk = unzOpen(input_filename.c_str());
