@@ -14,6 +14,7 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "axmldec_config.hpp"
 #include "jitana/util/axml_parser.hpp"
 
 #include <iostream>
