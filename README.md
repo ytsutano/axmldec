@@ -48,7 +48,7 @@ Build the tool from the source code (see below).
 
 ### 3.1 Decoding `AndroidManifest.xml`
 
-Pass the manifest file (either binary or text) to decodedecode:
+Pass the manifest file (either binary or text) to decode:
 ```sh
 axmldec -o output.xml AndroidManifest.xml
 ```
