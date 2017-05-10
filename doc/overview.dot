@@ -23,7 +23,6 @@ digraph {
                 rank=same;
             }
             write_xml [label="boost_pt::\nwrite_xml()", URL="http://www.boost.org/doc/libs/1_64_0/doc/html/boost/property_tree/xml_parser/write_xml_idp683815200.html"];
-            read_axml_xml [shape=point];
         }
         ptree [label="Boost\nProperty Tree", shape=none, URL="http://www.boost.org/doc/libs/1_64_0/doc/html/property_tree.html"];
 
