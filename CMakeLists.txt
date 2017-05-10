@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 project(axmldec C CXX)
-option(ENABLE_APK_LOADING "enable loading from an APK file" ON)
 set(AXMLDEC_VERSION_MAJOR 1)
 set(AXMLDEC_VERSION_MINOR 2)
 set(AXMLDEC_VERSION_PATCH 0)
@@ -50,6 +49,7 @@ add_executable(axmldec
     lib/jitana/util/axml_parser.cpp
 )
 
+# Boost.
 set(BOOST_MIN_VERSION "1.53.0")
 find_package(Boost ${BOOST_MIN_VERSION}
     COMPONENTS system iostreams program_options locale REQUIRED)
@@ -60,25 +60,22 @@ add_definitions(
 )
 target_link_libraries(axmldec ${Boost_LIBRARIES})
 
-if(ENABLE_APK_LOADING)
-    find_package(ZLIB REQUIRED)
-    include_directories(${ZLIB_INCLUDE_DIR})
+# Zlib.
+find_package(ZLIB REQUIRED)
+include_directories(${ZLIB_INCLUDE_DIR})
 
-    add_definitions(
-        -DENABLE_APK_LOADING=1
-    )
-    add_library(minizip STATIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/external/minizip/unzip.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/external/minizip/ioapi.c
-    )
-    set_target_properties(minizip PROPERTIES
-        COMPILE_DEFINITIONS "NOUNCRYPT;NOCRYPT")
-    target_link_libraries(minizip ${ZLIB_LIBRARIES})
-    set(MINIZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/minizip)
-    set(MINIZIP_LIBRARIES minizip)
-    include_directories(SYSTEM ${MINIZIP_INCLUDE_DIR})
-    target_link_libraries(axmldec ${MINIZIP_LIBRARIES})
-endif()
+# MiniZip.
+add_library(minizip STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/minizip/unzip.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/minizip/ioapi.c
+)
+set_target_properties(minizip PROPERTIES
+    COMPILE_DEFINITIONS "NOUNCRYPT;NOCRYPT")
+target_link_libraries(minizip ${ZLIB_LIBRARIES})
+set(MINIZIP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/external/minizip)
+set(MINIZIP_LIBRARIES minizip)
+include_directories(SYSTEM ${MINIZIP_INCLUDE_DIR})
+target_link_libraries(axmldec ${MINIZIP_LIBRARIES})
 
 #-------------------------------------------------------------------------------
 # Install

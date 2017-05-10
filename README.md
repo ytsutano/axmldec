@@ -84,11 +84,8 @@ axmldec com.example.app.apk | xmllint --xpath 'string(/manifest/@package)' -
 
 3. Compile axmldec:
     ```sh
-    cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_APK_LOADING=YES . && make
+    cmake -DCMAKE_BUILD_TYPE=Release . && make
     ```
-
-    You can specify `-DENABLE_APK_LOADING=NO` to disable APK loading. In this
-    case, zlib is not required.
 
 ## 5 Developer
 

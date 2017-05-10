@@ -25,9 +25,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/program_options.hpp>
 
-#ifdef ENABLE_APK_LOADING
 #include <unzip.h>
-#endif
 
 namespace boost_pt = boost::property_tree;
 
@@ -49,7 +47,6 @@ struct imemstream : virtual membuf, std::istream {
 
 std::vector<char> extract_manifest(const std::string& input_filename)
 {
-#ifdef ENABLE_APK_LOADING
     auto* apk = unzOpen(input_filename.c_str());
     if (apk == nullptr) {
         throw std::runtime_error("not an APK file");
@@ -92,10 +89,6 @@ std::vector<char> extract_manifest(const std::string& input_filename)
     unzClose(apk);
 
     return content;
-#else
-    (void)input_filename;
-    throw std::runtime_error("axmldec is compiled without APK loading support");
-#endif
 }
 
 void write_xml(const std::string& output_filename, const boost_pt::ptree& pt)
@@ -173,12 +166,6 @@ int main(int argc, char** argv)
             std::cout << "." << AXMLDEC_VERSION_MINOR;
             std::cout << "." << AXMLDEC_VERSION_PATCH;
             std::cout << " (" << AXMLDEC_BUILD_TIMESTAMP << ")\n";
-            std::cout << "APK loading support: ";
-#ifdef ENABLE_APK_LOADING
-            std::cout << "enabled\n";
-#else
-            std::cout << "disabled\n";
-#endif
             std::cout << "Copyright (C) 2017 Yutaka Tsutano.\n";
             return 0;
         }
